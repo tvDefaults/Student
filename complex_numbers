@@ -1,0 +1,65 @@
+#include <iostream>
+
+using namespace std;
+
+class Complex{
+private:
+    double real_num;
+    double imaginary_num;
+
+public:
+    Complex(double r = 0.0, double i = 0.0) : real_num(r), imaginary_num(i) {}
+
+    double get_real() const
+    {
+        return real_num;
+    }
+    void set_real(double r)
+    {
+        real_num = r;
+    }
+
+    double get_im() const
+    {
+        return imaginary_num;
+    }
+    void set_im(double i)
+    {
+        imaginary_num = i;
+    }
+
+    void print() const
+    {
+        cout << real_num;
+        if (imaginary_num >= 0)
+        {
+            cout << "+";
+        }
+        cout << imaginary_num << "i" << endl;
+    }
+
+    Complex add(const Complex& next) const
+    {
+        return Complex(real_num + next.real_num, imaginary_num + next.imaginary_num);
+    }
+
+    Complex add(double num) const
+    {
+        return Complex(real_num + num, imaginary_num);
+    }
+};
+
+
+
+int main()
+{
+    Complex a(1.0, -2.0); // creates 1-2i
+    Complex b(3.14); // creates 3.14
+
+    b.set_im(-5);
+
+    Complex c = a.add(b);
+
+    c.print(); // prints 4.14-7i
+    return 0;
+}
