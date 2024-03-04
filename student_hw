@@ -1,0 +1,99 @@
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+class Student{
+private:
+    std::string name;
+    std::string surname;
+    std::string album_number;
+    //int grades;
+    std::vector<double> grades;
+
+public:
+// setting _fullname, setting number, student summary, adding new grades, mean grade, passing checker
+
+    Student(const std::string& n, const std::string& s, const std::string& a)
+        {
+            name = n;
+            surname = s;
+            album_number = a;
+        }
+    void n(const std::string& newName)
+        {
+            name = newName;
+        }
+
+    void s(const std::string& newSurname)
+        {
+            surname = newSurname;
+        }
+
+    void a(const std::string& new_album_number)
+        {
+         if (new_album_number.length() < 5 || new_album_number.length() > 6)
+         {
+          return;
+         }
+           album_number = new_album_number;
+        }
+    void displaySummary() const
+        {
+        cout << "Name: " << name << endl;
+        cout << "Surname: " << surname << endl;
+        cout << "Album Number: " << album_number << endl;
+        cout << "Grades:";
+            for (const auto& grade : grades)
+            {
+                cout << " " << grade;
+            }
+            cout << endl;
+        }
+
+    void addGrade(double grade)
+        {
+        if (grade < 2.0 || grade > 5.0)
+        {
+          throw std::invalid_argument("Invalid grade");
+        }
+          grades.push_back(grade);
+        }
+
+    double calculateMeanGrade() const
+        {
+         if (grades.empty())
+            {
+                return 0.0;
+            }
+         double sum = 0.0;
+         for (const auto& grade : grades)
+            {
+                sum += grade;
+            }
+           return sum / grades.size();
+        }
+    bool passedSemester() const
+        {
+        int countTwos = 0;
+        for (const auto& grade : grades)
+            {
+            if (grade == 2.0)
+              {
+               countTwos++;
+               if (countTwos > 1)
+                {
+                return false;
+                }
+              }
+            }
+        return true;
+        }
+};
+
+int main()
+{
+
+    return 0;
+}
