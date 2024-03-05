@@ -39,7 +39,7 @@ public:
          }
            album_number = new_album_number;
         }
-    void displaySummary() const
+    void displaySummary() 
         {
         cout << "Name: " << name << endl;
         cout << "Surname: " << surname << endl;
@@ -61,7 +61,7 @@ public:
           grades.push_back(grade);
         }
 
-    double calculateMeanGrade() const
+    double calculateMeanGrade() 
         {
          if (grades.empty())
             {
@@ -74,7 +74,7 @@ public:
             }
            return sum / grades.size();
         }
-    bool passedSemester() const
+    bool passedSemester() 
         {
         int countTwos = 0;
         for (const auto& grade : grades)
