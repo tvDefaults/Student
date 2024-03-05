@@ -8,9 +8,12 @@ private:
     double imaginary_num;
 
 public:
-    Complex(double r = 0.0, double i = 0.0) : real_num(r), imaginary_num(i) {}
+    Complex(double r = 0.0, double i = 0.0) : real_num(r), imaginary_num(i) 
+{
 
-    double get_real() const
+}
+
+    double get_real() 
     {
         return real_num;
     }
@@ -19,7 +22,7 @@ public:
         real_num = r;
     }
 
-    double get_im() const
+    double get_im() 
     {
         return imaginary_num;
     }
@@ -38,12 +41,12 @@ public:
         cout << imaginary_num << "i" << endl;
     }
 
-    Complex add(const Complex& next) const
+    Complex add(const Complex& next) 
     {
         return Complex(real_num + next.real_num, imaginary_num + next.imaginary_num);
     }
 
-    Complex add(double num) const
+    Complex add(double num) 
     {
         return Complex(real_num + num, imaginary_num);
     }
