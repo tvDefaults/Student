@@ -1,0 +1,119 @@
+#include <SFML/Window.hpp>
+#include <SFML/Graphics.hpp>
+#include <iostream>
+#include <vector>
+#include <cstdlib>
+#include <ctime>
+
+class CustomRectangleShape : public sf::RectangleShape {
+private:
+    bool selected;
+    sf::Color defaultColor;
+    sf::Color selectedColor;
+
+public:
+    CustomRectangleShape(float x, float y, float speed)
+        : sf::RectangleShape(sf::Vector2f(x, y)), selected(false),
+        defaultColor(sf::Color::Blue), selectedColor(sf::Color::Red) {
+        setFillColor(defaultColor);
+    }
+
+    void moveInDirection(const sf::Time& elapsed) {
+        if (selected) {
+            sf::Vector2f movement(0.0f, 0.0f);
+            float distance = 200.0f * elapsed.asSeconds();
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+                movement.x -= distance;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+                movement.x += distance;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+                movement.y -= distance;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+                movement.y += distance;
+
+            sf::Vector2f newPosition = getPosition() + movement;
+            sf::FloatRect windowBounds(0.0f, 0.0f, 800.0f, 600.0f);
+
+            if (newPosition.x >= windowBounds.left && newPosition.x + getSize().x <= windowBounds.left + windowBounds.width)
+                setPosition(newPosition.x, getPosition().y);
+
+            if (newPosition.y >= windowBounds.top && newPosition.y + getSize().y <= windowBounds.top + windowBounds.height)
+                setPosition(getPosition().x, newPosition.y);
+        }
+    }
+
+    bool isClicked(const sf::Vector2i& mouse_position) {
+        sf::FloatRect rectBounds = getGlobalBounds();
+        return rectBounds.contains(static_cast<sf::Vector2f>(mouse_position));
+    }
+
+    bool isSelected() const {
+        return selected;
+    }
+
+    void setSelected(bool isSelected) {
+        selected = isSelected;
+        setFillColor(isSelected ? selectedColor : defaultColor);
+    }
+};
+
+int main() {
+    sf::RenderWindow window(sf::VideoMode(800, 600), "SFML Rectangle Movement");
+
+    std::srand(static_cast<unsigned int>(std::time(nullptr)));
+
+    std::vector<CustomRectangleShape> rectangles;
+
+    for (int i = 0; i < 10; ++i) {
+        sf::Vector2f size(120.0f, 60.0f);
+        sf::Vector2f position(std::rand() % (window.getSize().x - 120), std::rand() % (window.getSize().y - 60));
+        CustomRectangleShape rectangle(size.x, size.y, 200.0f); // Width, height, speed
+        rectangle.setPosition(position);
+        rectangle.setFillColor(sf::Color(0, 255, 0)); 
+        rectangles.push_back(rectangle);
+    }
+
+    CustomRectangleShape* selectedRectangle = nullptr;
+
+    sf::Clock clock;
+
+    while (window.isOpen()) {
+        sf::Time elapsed = clock.restart();
+
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
+                window.close();
+
+            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+
+                for (auto& rect : rectangles) {
+                    if (rect.isClicked(mousePos)) {
+                        if (selectedRectangle != nullptr) {
+                            selectedRectangle->setSelected(false); 
+                        }
+                        selectedRectangle = &rect;
+                        rect.setSelected(true); // Select the clicked rectangle
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (selectedRectangle != nullptr) {
+            selectedRectangle->moveInDirection(elapsed);
+        }
+
+        window.clear();
+
+        for (const auto& rect : rectangles) {
+            window.draw(rect);
+        }
+
+        window.display();
+    }
+
+    return 0;
+}
