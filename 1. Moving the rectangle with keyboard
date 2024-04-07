@@ -1,0 +1,88 @@
+#include <SFML/Window.hpp>
+#include <SFML/Graphics.hpp>
+#include <iostream>
+
+class CustomRectangleShape : public sf::RectangleShape
+{
+private:
+    float speed;
+
+public:
+    CustomRectangleShape(float x, float y, float speed)
+        : sf::RectangleShape(sf::Vector2f(x, y)), speed(speed)
+    {
+    }
+
+    void moveInDirection(const sf::Time& elapsed, const sf::Keyboard::Key& key)
+    {
+        sf::Vector2f movement(0.0, 0.0);
+        float distance = speed * elapsed.asSeconds();
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+            movement.x -= distance;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+            movement.x += distance;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+            movement.y -= distance;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+            movement.y += distance;
+
+        sf::Vector2f newPosition = getPosition() + movement;
+        sf::FloatRect windowBounds(0.0, 0.0, 800.0, 600.0);
+
+        // x_position
+        if (newPosition.x >= windowBounds.left && newPosition.x + getSize().x <= windowBounds.left + windowBounds.width)
+            setPosition(newPosition.x, getPosition().y);
+        // y_position
+        if (newPosition.y >= windowBounds.top && newPosition.y + getSize().y <= windowBounds.top + windowBounds.height)
+            setPosition(getPosition().x, newPosition.y);
+    }
+
+    bool isClicked(sf::Vector2i& mouse_position) const {
+        sf::FloatRect rectBounds = getGlobalBounds();
+        return rectBounds.contains(static_cast<sf::Vector2f>(mouse_position));
+    }
+};
+
+int main() {
+    sf::RenderWindow window(sf::VideoMode(800, 600), "SFML Rectangle Movement");
+
+    CustomRectangleShape rectangle(100, 100, 200); // Width, height, speed
+    rectangle.setFillColor(sf::Color::Blue);
+    rectangle.setPosition(350, 250);
+
+    sf::Clock clock;
+
+    while (window.isOpen())
+    {
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+                window.close();
+
+            if (event.type == sf::Event::MouseButtonPressed)
+            {
+                if (event.mouseButton.button == sf::Mouse::Left)
+                {
+                    sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+                    if (rectangle.isClicked(mousePos))
+                    {
+                        sf::Color randomColor = sf::Color(rand() % 256, rand() % 256, rand() % 256);
+                        rectangle.setFillColor(randomColor);
+                    }
+                }
+            }
+        }
+
+        sf::Time elapsed = clock.restart();
+
+        rectangle.moveInDirection(elapsed, sf::Keyboard::Key::Unknown);
+
+        window.clear();
+        window.draw(rectangle);
+        window.display();
+    }
+
+    return 0;
+}
