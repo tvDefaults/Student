@@ -28,7 +28,7 @@ public:
             movement.y += distance;
 
         sf::Vector2f newPosition = getPosition() + movement;
-        sf::FloatRect windowBounds(0.0, 0.0, 800.0, 600.0);
+        sf::FloatRect windowBounds(0.0, 0.0, 800, 600);
 
         // x_position
         if (newPosition.x >= windowBounds.left && newPosition.x + getSize().x <= windowBounds.left + windowBounds.width)
@@ -74,15 +74,12 @@ int main() {
                 }
             }
         }
-
         sf::Time elapsed = clock.restart();
-
         rectangle.moveInDirection(elapsed, sf::Keyboard::Key::Unknown);
 
         window.clear();
         window.draw(rectangle);
         window.display();
     }
-
     return 0;
 }
